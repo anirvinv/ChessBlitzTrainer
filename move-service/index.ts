@@ -17,7 +17,7 @@ app.get("/", (req, res) => {
 app.post("/best_black_move", (req, res) => {
   let fen: string = req.body["fen"];
   let game: Chess = new Chess(fen);
-  const move = getBestBlackMove(game, 2);
+  const move = getBestBlackMove(game, 3);
   res.json(move);
 });
 

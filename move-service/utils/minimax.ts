@@ -10,11 +10,11 @@ import {
   blackRookTable,
   knightTable,
   queenTable,
-} from "./piece-square-tables.ts";
+} from "./piece-square-tables";
 
 function getBestBlackMove(
   game: Chess,
-  depth = 2
+  depth: number
 ): { bestBlackMove: string; count: number } {
   let moves: string[] = game.moves();
   let bestMoveIndex: number = 0;
@@ -44,20 +44,14 @@ function minimax(
   if (depth == 0 || game.moves().length == 0) {
     return evaluateBoardScore(game);
   }
-
   let moves = game.moves();
-
   if (isMaximizing) {
     let maxScore = -99999;
     for (let i = 0; i < moves.length; i++) {
       game.move(moves[i]);
       let score = minimax(depth - 1, game, false, alpha, beta, numPositions);
-      if (score > maxScore) {
-        maxScore = score;
-      }
-      if (maxScore > alpha) {
-        alpha = maxScore;
-      }
+      maxScore = Math.max(score, maxScore);
+      alpha = Math.max(alpha, score);
       game.undo();
       if (beta <= alpha) {
         break;
@@ -69,12 +63,8 @@ function minimax(
     for (let i = 0; i < moves.length; i++) {
       game.move(moves[i]);
       let score = minimax(depth - 1, game, false, alpha, beta, numPositions);
-      if (score < minScore) {
-        minScore = score;
-      }
-      if (minScore < beta) {
-        beta = minScore;
-      }
+      minScore = Math.min(score, minScore);
+      beta = Math.min(score, beta);
       game.undo();
       if (beta <= alpha) {
         break;
@@ -85,58 +75,36 @@ function minimax(
 }
 
 function evaluateBoardScore(game: Chess): number {
-  function getTableScore(
-    table: number[][],
-    type: string,
-    color: string
-  ): number {
-    let score = 0;
-    for (let i = 0; i < 8; i++) {
-      for (let j = 0; j < 8; j++) {
-        if (
-          game.board() != null &&
-          type === game.board()[i][j]?.type &&
-          game.board()[i][j]?.color === color
-        ) {
-          score += table[i][j];
-        }
-      }
-    }
-    return score;
-  }
-  let score = 0;
-  score += getTableScore(whitePawnTable, "p", "w");
-  score += getTableScore(blackPawnTable, "p", "b");
-
-  score += getTableScore(knightTable, "n", "w");
-  score += getTableScore(knightTable, "n", "b");
-
-  score += getTableScore(whiteBishopTable, "b", "w");
-  score += getTableScore(blackBishopTable, "b", "b");
-
-  score += getTableScore(whiteRookTable, "r", "w");
-  score += getTableScore(blackRookTable, "r", "b");
-
-  score += getTableScore(queenTable, "q", "w");
-  score += getTableScore(queenTable, "q", "b");
-
-  score += getTableScore(whiteKingTable, "k", "w");
-  score += getTableScore(blackKingTable, "k", "b");
-
+  const tableMap: { [index: string]: number[][] } = {
+    wp: whitePawnTable,
+    bp: blackPawnTable,
+    wn: knightTable,
+    bn: knightTable,
+    wb: whiteBishopTable,
+    bb: blackBishopTable,
+    wr: whiteRookTable,
+    br: blackRookTable,
+    wq: queenTable,
+    bq: queenTable,
+    wk: whiteKingTable,
+    bk: blackKingTable,
+  };
   let pieceScores = { p: 10, n: 30, b: 30, r: 50, q: 90, k: 900 };
-
-  const board = game.board();
+  let score = 0;
+  let board = game.board();
   for (let i = 0; i < 8; i++) {
     for (let j = 0; j < 8; j++) {
       if (board[i][j] != null) {
-        score +=
-          board[i][j]!.color == "w"
-            ? pieceScores[board[i][j]!.type]
-            : -1 * pieceScores[board[i][j]!.type];
+        let key = game.board()[i][j]!.color + board[i][j]!.type;
+        score += tableMap[key][i][j];
+        if (board[i][j]!.color == "w") {
+          score += pieceScores[board[i][j]!.type];
+        } else {
+          score -= pieceScores[board[i][j]!.type];
+        }
       }
     }
   }
-
   return score;
 }
 export { getBestBlackMove };
