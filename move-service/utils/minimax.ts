@@ -15,21 +15,25 @@ import {
 function getBestBlackMove(
   game: Chess,
   depth: number
-): { bestBlackMove: string; count: number } {
+): { bestBlackMove: string; count: number; score: number } {
   let moves: string[] = game.moves();
   let bestMoveIndex: number = 0;
   let minScore: number = 99999;
   let numPositions = { count: 0 };
   for (let i = 0; i < moves.length; i++) {
     game.move(moves[i]);
-    let score = minimax(depth, game, false, -999999, 999999, numPositions);
+    let score = minimax(depth - 1, game, true, -9999, 9999, numPositions);
     if (score < minScore) {
       minScore = score;
       bestMoveIndex = i;
     }
     game.undo();
   }
-  return { bestBlackMove: moves[bestMoveIndex], count: numPositions.count };
+  return {
+    bestBlackMove: moves[bestMoveIndex],
+    count: numPositions.count,
+    score: minScore,
+  };
 }
 
 function minimax(
@@ -41,12 +45,22 @@ function minimax(
   numPositions: { count: number }
 ): number {
   numPositions.count++;
-  if (depth == 0 || game.moves().length == 0) {
+  let moves = game.moves();
+  moves = moves
+    .map((value) => ({ value, sort: Math.random() }))
+    .sort((a, b) => a.sort - b.sort)
+    .map(({ value }) => value);
+
+  if (depth == 0 || moves.length == 0) {
     return evaluateBoardScore(game);
   }
-  let moves = game.moves();
+  if (depth > 3) console.log(depth);
+  if (moves.length <= 10) {
+    console.log("Happened");
+    depth++;
+  }
   if (isMaximizing) {
-    let maxScore = -99999;
+    let maxScore = -9999;
     for (let i = 0; i < moves.length; i++) {
       game.move(moves[i]);
       let score = minimax(depth - 1, game, false, alpha, beta, numPositions);
@@ -59,7 +73,7 @@ function minimax(
     }
     return maxScore;
   } else {
-    let minScore = 99999;
+    let minScore = 9999;
     for (let i = 0; i < moves.length; i++) {
       game.move(moves[i]);
       let score = minimax(depth - 1, game, false, alpha, beta, numPositions);
@@ -73,23 +87,23 @@ function minimax(
     return minScore;
   }
 }
+const tableMap: { [index: string]: number[][] } = {
+  wp: whitePawnTable,
+  bp: blackPawnTable,
+  wn: knightTable,
+  bn: knightTable,
+  wb: whiteBishopTable,
+  bb: blackBishopTable,
+  wr: whiteRookTable,
+  br: blackRookTable,
+  wq: queenTable,
+  bq: queenTable,
+  wk: whiteKingTable,
+  bk: blackKingTable,
+};
+const pieceScores = { p: 10, n: 30, b: 30, r: 50, q: 90, k: 900 };
 
 function evaluateBoardScore(game: Chess): number {
-  const tableMap: { [index: string]: number[][] } = {
-    wp: whitePawnTable,
-    bp: blackPawnTable,
-    wn: knightTable,
-    bn: knightTable,
-    wb: whiteBishopTable,
-    bb: blackBishopTable,
-    wr: whiteRookTable,
-    br: blackRookTable,
-    wq: queenTable,
-    bq: queenTable,
-    wk: whiteKingTable,
-    bk: blackKingTable,
-  };
-  let pieceScores = { p: 10, n: 30, b: 30, r: 50, q: 90, k: 900 };
   let score = 0;
   let board = game.board();
   for (let i = 0; i < 8; i++) {
