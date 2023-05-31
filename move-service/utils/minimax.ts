@@ -55,7 +55,7 @@ function minimax(
     return evaluateBoardScore(game);
   }
   if (depth > 3) console.log(depth);
-  if (moves.length <= 10) {
+  if (moves.length <= 10 && (alpha > 70 || beta < -70)) {
     console.log("Happened");
     depth++;
   }

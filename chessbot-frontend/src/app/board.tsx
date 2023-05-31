@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Chess, Move, Square } from "chess.js";
 import { Chessboard } from "react-chessboard";
-import { getBestBlackMove } from "./(utils)/minimax";
 
 interface BoardMove {
     from: string;
@@ -73,7 +72,9 @@ export default function Board() {
             <div className="my-3 w-fit h-fit p-2 bg-gray-100 rounded text-black">
                 Total Positions Computed: {totalPositions}
             </div>
-            <Chessboard position={game.fen()} onPieceDrop={onDrop} />
+            <div>
+                <Chessboard position={game.fen()} onPieceDrop={onDrop} />
+            </div>
         </>
     );
 }
