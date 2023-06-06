@@ -24,7 +24,7 @@ export default function Board() {
             //     setTotalPositions(totalPositions + count);
             //     makeAMove(bestBlackMove);
             // }, 300);
-            fetch("http://localhost:8000/best_black_move", {
+            fetch("http://52.15.38.133:8000/best_black_move", {
                 method: "POST",
                 body: JSON.stringify({
                     fen: game.fen(),
