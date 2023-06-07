@@ -42,7 +42,8 @@ function minimax(
   isMaximizing: boolean,
   alpha: number,
   beta: number,
-  numPositions: { count: number }
+  numPositions: { count: number },
+  totaldepth = 0
 ): number {
   numPositions.count++;
   let moves = game.moves();
@@ -50,20 +51,28 @@ function minimax(
     .map((value) => ({ value, sort: Math.random() }))
     .sort((a, b) => a.sort - b.sort)
     .map(({ value }) => value);
-
-  if (depth == 0 || moves.length == 0) {
+  if (depth == 0 || moves.length == 0 || totaldepth >= 10) {
     return evaluateBoardScore(game);
   }
+  totaldepth++;
   if (depth > 3) console.log(depth);
   if (moves.length <= 10 && (alpha > 70 || beta < -70)) {
-    console.log("Happened");
     depth++;
+    totaldepth++;
   }
   if (isMaximizing) {
     let maxScore = -9999;
     for (let i = 0; i < moves.length; i++) {
       game.move(moves[i]);
-      let score = minimax(depth - 1, game, false, alpha, beta, numPositions);
+      let score = minimax(
+        depth - 1,
+        game,
+        false,
+        alpha,
+        beta,
+        numPositions,
+        totaldepth
+      );
       maxScore = Math.max(score, maxScore);
       alpha = Math.max(alpha, score);
       game.undo();
@@ -76,7 +85,15 @@ function minimax(
     let minScore = 9999;
     for (let i = 0; i < moves.length; i++) {
       game.move(moves[i]);
-      let score = minimax(depth - 1, game, false, alpha, beta, numPositions);
+      let score = minimax(
+        depth - 1,
+        game,
+        false,
+        alpha,
+        beta,
+        numPositions,
+        totaldepth
+      );
       minScore = Math.min(score, minScore);
       beta = Math.min(score, beta);
       game.undo();

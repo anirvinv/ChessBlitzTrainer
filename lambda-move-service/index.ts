@@ -31,6 +31,7 @@ export const handler = async (
     responseBody = bestBlackMove;
   } catch (err) {
     console.log("Please use a valid fen string");
+    console.log(event["body"]);
     console.log(err);
   }
 
