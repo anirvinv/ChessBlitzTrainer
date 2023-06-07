@@ -4,6 +4,8 @@ A mediocre chess engine that is bad at openings and better at middle and endgame
 
 ![gif didnt load](https://media.giphy.com/media/ZAfU27v5pqyS8Vr6Sn/giphy.gif)
 
+Try it out [here](https://main.d25p17b19pzykd.amplifyapp.com/)
+
 (The bot is black)
 
 ## Features:
@@ -12,14 +14,6 @@ A mediocre chess engine that is bad at openings and better at middle and endgame
   - Reason: When there are not many moves to choose from, search tree is narrow. Thus, the depth can be increased to dramatically improve performance
   - Could improve results for endgames 
 - Currently, the max guaranteed search depth is 3 ignoring the dynamic adjustments
-
-
-## Build/Run
-1. Clone the repo 
-2. ```npm install``` in both directories
-3. Run two processes:
-   1. ```npm run dev``` in chessbot-frontend/
-   2. ```npm start``` in move-service/
 
 ## Todo:
 - Add timed games functionality
