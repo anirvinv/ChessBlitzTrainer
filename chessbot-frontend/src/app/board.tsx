@@ -12,6 +12,7 @@ interface BoardMove {
 
 export default function Board() {
     const [game, setGame] = useState(new Chess());
+    const [draggable, setDraggable] = useState(true);
     const [totalPositions, setTotalPositions] = useState(0);
     useEffect(() => {
         if (game.isGameOver()) {
@@ -19,26 +20,34 @@ export default function Board() {
             return;
         }
         if (game.turn() == "b") {
+            setDraggable(false);
+
             // setTimeout(() => {
             //     let { bestBlackMove, count } = getBestBlackMove(game);
             //     setTotalPositions(totalPositions + count);
             //     makeAMove(bestBlackMove);
             // }, 300);
-            fetch("https://52.15.38.133:8000/best_black_move", {
-                method: "POST",
-                body: JSON.stringify({
-                    fen: game.fen(),
-                }),
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                cache: "no-store",
-            })
+            console.log({ fen: game.fen() });
+            fetch(
+                "https://9y57ac2n3c.execute-api.us-east-2.amazonaws.com/best_black_move",
+                {
+                    method: "POST",
+                    body: JSON.stringify({
+                        fen: game.fen(),
+                    }),
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    cache: "no-store",
+                }
+            )
                 .then((res) => res.json())
                 .then((data) => {
                     console.log(data);
                     setTotalPositions(totalPositions + data.count);
                     makeAMove(data.bestBlackMove);
+
+                    setDraggable(true);
                 });
         } else {
         }
@@ -49,9 +58,7 @@ export default function Board() {
         let result: Move | null = null;
         try {
             result = gameCopy.move(move);
-        } catch (error) {
-            console.log(error);
-        }
+        } catch (error) {}
         setGame(gameCopy);
         return result; // null if the move was illegal, the move object if the move was legal
     }
@@ -73,7 +80,11 @@ export default function Board() {
                 Total Positions Computed: {totalPositions}
             </div>
             <div>
-                <Chessboard position={game.fen()} onPieceDrop={onDrop} />
+                <Chessboard
+                    arePiecesDraggable={draggable}
+                    position={game.fen()}
+                    onPieceDrop={onDrop}
+                />
             </div>
         </>
     );

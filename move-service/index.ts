@@ -2,8 +2,6 @@ import express from "express";
 import cors from "cors";
 import { Chess } from "chess.js";
 import dotenv from "dotenv";
-import fs from "fs";
-import https from "https";
 import { getBestBlackMove } from "./utils/minimax";
 
 dotenv.config();
@@ -28,18 +26,6 @@ app.post("/best_black_move", (req, res) => {
   res.json(move);
 });
 
-if (process.env.NODE_ENV == "PROD") {
-  let key = fs.readFileSync(process.env.KEY_PATH);
-  let cert = fs.readFileSync(process.env.CERT_PATH);
-  let options = {
-    key: key,
-    cert: cert,
-  };
-  let httpsServer = https.createServer(options, app);
-  console.log("Listening on port 8000");
-  httpsServer.listen(8000);
-} else {
-  app.listen(port, () => {
-    console.log(`Express server running on port ${port}`);
-  });
-}
+app.listen(port, () => {
+  console.log(`Express server running on port ${port}/`);
+});
