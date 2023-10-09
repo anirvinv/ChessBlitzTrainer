@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.ts",
   "scripts": {
-    "test": "node -r esbuild-register run.ts"
+    "test": "node -r esbuild-register run.ts",
+    "build": "lambda-build"
   },
   "author": "",
   "license": "ISC",

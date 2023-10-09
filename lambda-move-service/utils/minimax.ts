@@ -54,12 +54,12 @@ function minimax(
   if (depth == 0 || moves.length == 0 || totaldepth >= 10) {
     return evaluateBoardScore(game);
   }
-  totaldepth++;
-  if (depth > 3) console.log(depth);
-  if (moves.length <= 10 && (alpha > 70 || beta < -70)) {
-    depth++;
-    totaldepth++;
-  }
+  // totaldepth++;
+  // if (depth > 3) console.log(depth);
+  // if (moves.length <= 10 && (alpha > 70 || beta < -70)) {
+  //   depth++;
+  //   totaldepth++;
+  // }
   if (isMaximizing) {
     let maxScore = -9999;
     for (let i = 0; i < moves.length; i++) {
