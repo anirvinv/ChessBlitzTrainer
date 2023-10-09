@@ -1,6 +1,6 @@
 # Chess Blitz Trainer
 
-A mediocre chess engine that is bad at openings and better at middle and endgames.
+A mediocre chess engine that is bad at openings and endgames, but better at middlegames.
 
 ![gif didnt load](https://media.giphy.com/media/ZAfU27v5pqyS8Vr6Sn/giphy.gif)
 
@@ -17,3 +17,4 @@ Try it out [here](https://main.d25p17b19pzykd.amplifyapp.com/)
 
 ## Todo:
 - Add timed games functionality
+- Sometimes the backend hangs
